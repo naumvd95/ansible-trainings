@@ -1,0 +1,25 @@
+---
+- name: add repo
+  apt_repository:
+    repo: deb http://nginx.org/packages/ubuntu/ trusty nginx
+    state: present
+  register: repostable  
+- name: Install Nginx
+  apt: pkg=nginx state=installed
+  when: repostable|success  
+  register: nginxinstalled  
+  notify:
+    - CHECK_NGINX
+- name: Create Web-root
+  when: nginxinstalled|success
+  file: dest={{ '{{' }} docroot {{ '}}' }} mode=755 state=directory owner=www-data group=www-data
+  register: rootwebcreated  
+  notify:
+    - RELOAD_NGINX
+- name: Create vn-Web-root
+  when: rootwebcreated|success
+  file: path=vnroot mode=755 state=directory owner=vnaumov
+- name: Check dir
+  stat:
+    path: vnroot
+  register: dircreated  

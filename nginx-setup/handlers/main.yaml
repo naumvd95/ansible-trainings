@@ -1,0 +1,5 @@
+---
+- name: CHECK_NGINX
+  service: name=nginx state=started
+- name: RELOAD_NGINX
+  service: name=nginx state=reloaded
