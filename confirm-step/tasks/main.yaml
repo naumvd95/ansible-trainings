@@ -1,3 +1,14 @@
 ---
+- name: get system info
+  setup: gather_subset=network filter=ansible_*
+  register: sysinfo
 - name: approve operation
-  shell: echo "everything is gonna be alright!"
+  when: sysinfo|success
+  shell: echo "everything is gonna be alright!" | tee -i /home/vnaumov/OK.txt
+  register: ok
+
+- debug:
+    msg: "{{ ok.stdout }}"
+
+- debug:
+    msg: " here is network configuration{{ sysinfo }}"
